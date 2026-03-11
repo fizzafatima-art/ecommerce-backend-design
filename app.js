@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const path = require('path');
 
 // Models
 const Product = require('./models/Product');
@@ -12,7 +13,9 @@ const app = express();
 
 // --- 1. CONFIGURATION & MIDDLEWARE ---
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
+
+// Public folder ki setting ko mazeed mazboot banaya hai
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true })); 
 
 app.use(session({
@@ -30,17 +33,13 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // --- 2. DATABASE CONNECTION ---
-mongoose.connect(process.env.MONGO_URI, {
-    family: 4 
-})
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("Database Connected! ✅"))
 .catch(err => console.log("DB Error: ", err));
 
 
 // --- 3. AUTH ROUTES ---
-
 app.get('/signup', (req, res) => res.render('signup'));
-
 app.post('/signup', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -53,7 +52,6 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/login', (req, res) => res.render('login'));
-
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -75,9 +73,7 @@ app.get('/logout', (req, res) => {
 });
 
 
-// --- 4. CART ROUTES (New Features) ---
-
-// Add to Cart
+// --- 4. CART ROUTES ---
 app.post('/add-to-cart/:id', (req, res) => {
     if (!req.session.cart) {
         req.session.cart = [];
@@ -93,12 +89,10 @@ app.post('/add-to-cart/:id', (req, res) => {
     res.redirect('/cart');
 });
 
-// View Cart
 app.get('/cart', async (req, res) => {
     const cart = req.session.cart || [];
     const productsInCart = [];
     let total = 0;
-
     try {
         for (let item of cart) {
             const product = await Product.findById(item.id);
@@ -120,13 +114,11 @@ app.get('/cart', async (req, res) => {
 
 
 // --- 5. PRODUCT ROUTES ---
-
 app.get(['/', '/products'], async (req, res) => {
     try {
         const perPage = 5; 
         const page = parseInt(req.query.page) || 1;
         let query = {};
-
         if (req.query.search) {
             query = {
                 $or: [
@@ -135,13 +127,10 @@ app.get(['/', '/products'], async (req, res) => {
                 ]
             };
         }
-
         const products = await Product.find(query)
             .skip((perPage * page) - perPage)
             .limit(perPage);
-
         const count = await Product.countDocuments(query);
-
         res.render('index', { 
             products,
             current: page,
@@ -154,7 +143,6 @@ app.get(['/', '/products'], async (req, res) => {
 });
 
 app.get('/add-product', isAuthenticated, (req, res) => res.render('add-product'));
-
 app.post('/add-product', isAuthenticated, async (req, res) => {
     try {
         await Product.create(req.body);
@@ -178,24 +166,31 @@ app.get('/products/:id', async (req, res) => {
 // --- 6. SEED ROUTE ---
 app.get('/seed', async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            throw new Error("Database not connected.");
+        }
         await Product.deleteMany({}); 
-       const seedProducts = [
-    { name: "Mechanical Keyboard", price: 5500, category: "Tech", image: "/assets/image/tech/keyboard.png", description: "Blue switch mechanical keyboard.", stock: 10 },
-    { name: "Wireless Headphones", price: 4500, category: "Tech", image: "/assets/image/tech/headphones.png", description: "Noise cancelling headphones.", stock: 8 },
-    { name: "Classic Interior Sofa", price: 45000, category: "Interior", image: "/assets/image/interior/sofa.png", description: "Stylish sofa.", stock: 5 },
-    { name: "German Flag", price: 500, category: "Misc", image: "/assets/image/tech/GB@2x.png", description: "High quality flag.", stock: 100 },
-    { name: "Electric Lamp", price: 2500, category: "Home", image: "/assets/image/interior/Electric Lamp.png", description: "Modern LED lamp.", stock: 20 },
-    { name: "Juicer Blender", price: 8500, category: "Appliances", image: "/assets/image/tech/electric juicer.png", description: "High speed juicer.", stock: 5 },
-    { name: "Indoor Plant", price: 1200, category: "Home", image: "/assets/image/interior/image 89.png", description: "Air-purifying plant.", stock: 50 },
-    { name: "Samsung Galaxy S23", price: 250000, category: "Tech", image: "/assets/image/tech/image 23.png", description: "Flagship Samsung mobile.", stock: 3 },
-    { name: "Smart Watch", price: 12000, category: "Tech", image: "/assets/image/tech/8.png", description: "Fitness tracking watch.", stock: 15 },
-    { name: "Digital Camera", price: 95000, category: "Tech", image: "/assets/image/tech/6.png", description: "Professional DSLR.", stock: 4 }
-];
+
+        // Paths ko Relative rakha hai aur filenames exact match hain
+        const seedProducts = [
+            { name: "Mechanical Keyboard", price: 5500, category: "Tech", image: "assets/image/tech/keyboard.png", description: "Blue switch mechanical keyboard.", stock: 10 },
+            { name: "Wireless Headphones", price: 4500, category: "Tech", image: "assets/image/tech/headphones.png", description: "Noise cancelling headphones.", stock: 8 },
+            { name: "Classic Interior Sofa", price: 45000, category: "Interior", image: "assets/image/interior/sofa.png", description: "Stylish sofa.", stock: 5 },
+            { name: "Oppo A23", price: 500, category: "Tech", image: "assets/image/tech/image 33.png", description: "Oppo A23 , 3GB RAM 128GB Storage", stock: 100 },
+            { name: "Electric Lamp", price: 2500, category: "Home", image: "assets/image/interior/Electric Lamp.png", description: "Modern LED lamp.", stock: 20 },
+            { name: "Juicer Blender", price: 8500, category: "Appliances", image: "assets/image/tech/electric juicer.png", description: "High speed juicer.", stock: 5 },
+            { name: "Indoor Plant", price: 1200, category: "Home", image: "assets/image/interior/image 89.png", description: "Air-purifying plant.", stock: 50 },
+            { name: "Samsung Galaxy S23", price: 250000, category: "Tech", image: "assets/image/tech/image 23.png", description: "Flagship Samsung mobile.", stock: 3 },
+            { name: "Smart Watch", price: 12000, category: "Tech", image: "assets/image/tech/8.png", description: "Fitness tracking watch.", stock: 15 },
+            { name: "Digital Camera", price: 95000, category: "Tech", image: "assets/image/tech/6.png", description: "Professional DSLR.", stock: 4 }
+        ];
+
         await Product.insertMany(seedProducts);
-        res.send("<h1>Database Reset & Updated! ✅</h1><a href='/products'>Go to Shop</a>");
+        res.send("<h1>Database Reset & Updated! ✅</h1><p>Check your shop now.</p><a href='/products'>Go to Shop</a>");
     } catch (err) {
         res.status(500).send("Seed error: " + err.message);
     }
 });
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
