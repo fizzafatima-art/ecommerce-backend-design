@@ -179,18 +179,18 @@ app.get('/products/:id', async (req, res) => {
 app.get('/seed', async (req, res) => {
     try {
         await Product.deleteMany({}); 
-        const seedProducts = [
-            { name: "Mechanical Keyboard", price: 5500, category: "Tech", image: "assets/Image/tech/keyboard.png", description: "Blue switch mechanical keyboard.", stock: 10 },
-            { name: "Wireless Headphones", price: 4500, category: "Tech", image: "assets/Image/tech/headphones.png", description: "Noise cancelling headphones.", stock: 8 },
-            { name: "Classic Interior Sofa", price: 45000, category: "Interior", image: "assets/Image/interior/sofa.png", description: "Stylish sofa.", stock: 5 },
-            { name: "German Flag", price: 500, category: "Misc", image: "assets/Layout1/Image/flags/DE@2x.png", description: "High quality flag.", stock: 100 },
-            { name: "Electric Lamp", price: 2500, category: "Home", image: "assets/Image/interior/Electric Lamp.png", description: "Modern LED lamp.", stock: 20 },
-            { name: "Juicer Blender", price: 8500, category: "Appliances", image: "assets/Image/tech/electric juicer.png", description: "High speed juicer.", stock: 5 },
-            { name: "Indoor Plant", price: 1200, category: "Home", image: "assets/Image/interior/image 89.png", description: "Air-purifying plant.", stock: 50 },
-            { name: "Samsung Galaxy S23", price: 250000, category: "Tech", image: "assets/Image/tech/image 23.png", description: "Flagship Samsung mobile.", stock: 3 },
-            { name: "Smart Watch", price: 12000, category: "Tech", image: "assets/Image/tech/8.png", description: "Fitness tracking watch.", stock: 15 },
-            { name: "Digital Camera", price: 95000, category: "Tech", image: "assets/Image/tech/6.png", description: "Professional DSLR.", stock: 4 }
-        ];
+       const seedProducts = [
+    { name: "Mechanical Keyboard", price: 5500, category: "Tech", image: "/assets/image/tech/keyboard.png", description: "Blue switch mechanical keyboard.", stock: 10 },
+    { name: "Wireless Headphones", price: 4500, category: "Tech", image: "/assets/image/tech/headphones.png", description: "Noise cancelling headphones.", stock: 8 },
+    { name: "Classic Interior Sofa", price: 45000, category: "Interior", image: "/assets/image/interior/sofa.png", description: "Stylish sofa.", stock: 5 },
+    { name: "German Flag", price: 500, category: "Misc", image: "/assets/image/tech/GB@2x.png", description: "High quality flag.", stock: 100 },
+    { name: "Electric Lamp", price: 2500, category: "Home", image: "/assets/image/interior/Electric Lamp.png", description: "Modern LED lamp.", stock: 20 },
+    { name: "Juicer Blender", price: 8500, category: "Appliances", image: "/assets/image/tech/electric juicer.png", description: "High speed juicer.", stock: 5 },
+    { name: "Indoor Plant", price: 1200, category: "Home", image: "/assets/image/interior/image 89.png", description: "Air-purifying plant.", stock: 50 },
+    { name: "Samsung Galaxy S23", price: 250000, category: "Tech", image: "/assets/image/tech/image 23.png", description: "Flagship Samsung mobile.", stock: 3 },
+    { name: "Smart Watch", price: 12000, category: "Tech", image: "/assets/image/tech/8.png", description: "Fitness tracking watch.", stock: 15 },
+    { name: "Digital Camera", price: 95000, category: "Tech", image: "/assets/image/tech/6.png", description: "Professional DSLR.", stock: 4 }
+];
         await Product.insertMany(seedProducts);
         res.send("<h1>Database Reset & Updated! ✅</h1><a href='/products'>Go to Shop</a>");
     } catch (err) {
