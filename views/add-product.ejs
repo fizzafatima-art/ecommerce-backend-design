@@ -1,0 +1,12 @@
+    <div class="container">
+    <h2>Add New Product</h2>
+    <form action="/add-product" method="POST">
+        <input type="text" name="name" placeholder="Product Name" required>
+        <input type="number" name="price" placeholder="Price" required>
+        <input type="text" name="category" placeholder="Category (e.g., Tech)" required>
+        <input type="text" name="image" placeholder="Image Path (e.g., assets/Image/tech/phone.png)" required>
+        <textarea name="description" placeholder="Product Description"></textarea>
+        <input type="number" name="stock" placeholder="Stock Quantity" required>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+</div>

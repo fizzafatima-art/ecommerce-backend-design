@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<div class="container">
+    <h2>Your Shopping Cart</h2>
+    <% if (products.length > 0) { %>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tr style="background: #f4f4f4;">
+                <th style="padding: 10px;">Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Subtotal</th>
+            </tr>
+            <% products.forEach(item => { %>
+                <tr style="border-bottom: 1px solid #ddd; text-align: center;">
+                    <td style="padding: 15px;"><%= item.name %></td>
+                    <td>Rs. <%= item.price %></td>
+                    <td><%= item.qty %></td>
+                    <td>Rs. <%= item.price * item.qty %></td>
+                </tr>
+            <% }) %>
+        </table>
+        <h3 style="text-align: right; margin-top: 20px;">Total: Rs. <%= total %></h3>
+        <button class="btn" style="float: right;">Checkout</button>
+    <% } else { %>
+        <p>Your cart is empty.</p>
+        <a href="/products" class="btn">Go Shopping</a>
+    <% } %>
+</div>
+<%- include('partials/footer') %>

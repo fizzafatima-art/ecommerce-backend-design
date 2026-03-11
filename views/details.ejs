@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= product.name %> | Details</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/products" class="back-link">← Back to Products</a>
+        
+        <div class="details-wrapper">
+            <div class="image-section">
+              \<img src="/<%= product.image %>" alt="<%= product.name %>" style="max-width: 100%; height: auto; border-radius: 10px;">
+            </div>
+            
+            <div class="info-section">
+                <h1><%= product.name %></h1>
+                <p class="category">Category: <%= product.category %></p>
+                <p class="price">Price: Rs. <%= product.price %></p>
+                <hr>
+                <p class="description"><strong>Description:</strong> <%= product.description %></p>
+                <p class="stock">Items in Stock: <strong><%= product.stock %></strong></p>
+                
+                <button class="buy-btn">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
